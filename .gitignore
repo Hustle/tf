@@ -1,0 +1,10 @@
+npm-debug.log
+node_modules/
+.DS_Store
+*.swp
+.tern-port
+.vscode
+*.sublime-project
+*.sublime-workspace
+coverage
+.nyc_output/

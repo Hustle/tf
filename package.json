@@ -1,0 +1,26 @@
+{
+  "name": "tf",
+  "version": "0.1.0",
+  "description": "Infrastructure management tool",
+  "main": "",
+  "bin": {
+    "tf": "tf"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HustleInc/tf.git"
+  },
+  "author": "Hustle",
+  "license": "CLOSED-SOURCE",
+  "bugs": {
+    "url": "https://github.com/HustleInc/ops/issues"
+  },
+  "homepage": "https://github.com/HustleInc/ops#readme",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "commander": "^2.11.0"
+  }
+}
