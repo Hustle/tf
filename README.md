@@ -1,0 +1,164 @@
+# `tf`
+A tool built on top of `terraform` to help make infrastructure management a bit easier.
+
+## Installation
+    $ npm install -g HustleInc/tf
+
+Add an environment variable so `tf` knows where to look for infrastructure projects:
+
+    export TF_INFRA_DIR=/path/to/infra/projects
+
+If the environment variable `TF_INFRA_DIR` is not set, `tf` will use the current
+working directory.
+
+## Usage
+
+    Usage: tf [options] <command> <project> <env> [terraformArgs...]
+
+    Infrastructure management tool
+
+
+    Options:
+
+      -V, --version            output the version number
+      -g, --group <group>      specify a group to allow multiple projects of the
+                               same type in the same environment
+      -f, --force              force destroy without prompt
+      -p, --profile <profile>  AWS profile, default is infra
+      -h, --help               output usage information
+
+
+    Arguments:
+
+      <command>
+        plan    - Test the project's infrastructure plan, format and evaluate changes
+        apply   - Apply the project's infrastructure
+        destroy - Remove the project's infrastructure
+        import  - Import an existing resource
+        rename  - Rename an infrastructure resource
+        remove  - Remove an infrastructure resource
+
+      <project>
+        A project name that maps to an infrastructure project directory
+
+        Example: kafka => ./kafka
+
+      <env>
+         An environment name that maps to an infrastructure config file specific to
+         the given environment
+
+         Example: dev => ./<project>/config/dev.tfvars
+
+
+    Examples:
+
+      Run a plan for Kafka infrastructure in the dev environment
+       $ ./tf plan kafka dev
+
+      Apply infrastructure for networking in the staging environment
+       $ ./tf apply network staging
+
+      Import an existing widget to the staging environment
+       $ ./tf import network staging aws_widgets.widget <widgetId>
+
+      Run a plan for the default ECS cluster in the staging environment
+       $ ./tf plan ecs-cluster staging
+
+      Run a plan for a stateful streams ECS cluster in the staging environment
+       $ ./tf plan ecs-cluster staging -g stateful-streams
+
+## Terraform
+
+"Terraform is a tool for building, changing, and versioning infrastructure safely and efficiently." --<cite><a href="https://www.terraform.io/intro/index.html" target="_blank">terraform.io</a></cite>
+
+## Why Abstract Terraform?
+The short answer is managing remote Terraform state can be tedious and error prone, but necessary, especially when working with a team. Terraform has a ton of features that are not usually needed day-to-day. This tool abstracts the details of handling Terraform state and focuses on the most used features while also providing a simple framework for creating terraform projects. It ensures infrastructure state is maintained across machines and makes it easier and safer for engineers to collaborate. This abstraction should cover most needs for planning, applying and removing infrastructure. For everything else use `terraform`, but be aware of any operation modifying remote state.
+
+## Creating an Infrastructure Project
+
+First, let's look at the basic structure of a `tf` infrastructure project and then break down the components.
+
+    ├── README.md
+    ├── config
+    │   ├── defaults.tfvars
+    │   ├── dev.tfvars
+    │   ├── production.tfvars
+    │   └── staging.tfvars
+    └── src
+        ├── data-sources.tf
+        ├── main.tf
+        └── provider.tf
+
+### `README`
+Describes the purpose and contents of the infrastructure project.
+
+### `config`
+Contains configuration files in [tfvars format](https://www.terraform.io/intro/getting-started/variables.html#from-a-file) that define the infrastructure for the region and environment. A *defaults* or *common* tfvars file is required and should define reasonable defaults to be used across environments.
+
+Environment specific variables must be defined in the appropriate environment tfvars file. The environment config file name maps to the &lt;env&gt; argument when `tf` is invoked.
+
+A project may need to further differentiate by *group* when it is necessary to deploy multiple groups of the same infrastructure in the same environment. For example, multiple ECS services exist in an ECS cluster and therefore groups are needed to define their unique configuration. Group variables must exist in a directory with the same name as the environment. For example, an ECS service config directory structure may look like:
+
+    ├── config
+    │   ├── defaults.tfvars
+    │   ├── production
+    │   │   ├── mongo-state-sp.tfvars
+    │   │   └── domain-event-sp.tfvars
+    │   ├── production.tfvars
+    │   ├── staging
+    │   │   ├── mongo-state-sp.tfvars
+    │   │   ├── domain-event-sp.tfvars
+    │   └── staging.tfvars
+
+Given this structure, the command to deploy the mongo state stream processor in the staging environment would look like:
+
+    $ tf apply ecs-service staging -g mongo-state-sp
+
+### `src`
+The source directory contains files that describe the state of the infrastructure for a given provider in the [tf file format](https://www.terraform.io/docs/configuration/syntax.html).
+
+The **provider.tf** defines the provider, AWS in the example below, along with the required terraform version and backend definition for remote state storage. In most cases this file can be copied as is from an existing infrastructure project (with the appropriate bucket and profile settings, of course).
+
+    # Set cloud provider and region
+    provider "aws" {
+      region = "${var.aws_region}"
+    }
+
+    # Version requirement and backend partial for remote state management
+    terraform {
+      required_version = ">=0.11.1"
+
+      backend "s3" {
+        bucket  = "some-infrastructure-bucket"
+        region  = "us-east-1"
+        profile = "some-aws-profile"
+      }
+    }
+
+The **data-sources.tf** defines any resources that need to be referenced but are built by other means, for example another infrastructure project or the AWS console. Data sources are only required when the resources are not defined in the current project and are needed to build new infrastructure. For example the AWS VPC resource is needed to create a new AWS security group resource, but likely defined in a **network** infrastructure project.
+
+    data "aws_vpc" "main" {
+      tags {
+        Name = "${var.environment}-vpc"
+      }
+    }
+
+    ...
+
+    resource "aws_security_group" "ecs_instance" {
+      name        = "ECS instance"
+      description = "ECS instance security group (${var.environment})"
+      vpc_id      = "${data.aws_vpc.main.id}"
+
+      tags {
+        Name        = "ecs-instance-sg"
+        environment = "${var.environment}"
+      }
+    }
+
+Any files with the tf extension in the `src` directory will be included in the infrastructure. For most projects it is sufficient to have everything defined in a **main.tf**, however for larger projects it may make sense to organize similar resources into various files for readability.
+
+## Development
+1. Fork the [HustleInc/tf](https://github.com/HustleInc/tf) repository
+1. Fix some bugs or add some new features
+1. Submit a pull request 😎
