@@ -16,9 +16,9 @@
   "author": "Hustle",
   "license": "CLOSED-SOURCE",
   "bugs": {
-    "url": "https://github.com/HustleInc/ops/issues"
+    "url": "https://github.com/HustleInc/tf/issues"
   },
-  "homepage": "https://github.com/HustleInc/ops#readme",
+  "homepage": "https://github.com/HustleInc/tf#readme",
   "dependencies": {
     "colors": "^1.1.2",
     "command-exists": "^1.2.2",
