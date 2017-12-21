@@ -5,6 +5,7 @@ const cli = require('commander');
 const pkg = require('./package.json');
 const path = require('path');
 const colors = require('colors');
+const cmdExists = require('command-exists');
 const { spawn, exec } = require('child_process');
 
 // Bootstrapped terraform commands
@@ -111,11 +112,15 @@ function run(args, terraformArgs, opts) {
     args.command = COMMAND_MAP[args.command];
   }
 
-  // Initialize state
-  initState(args, opts).then(() => {
-    // Run terraform command
-    runCommand(args, terraformArgs, opts).then(done, exitWithError);
-  }, exitWithError);
+  cmdExists('terraform').then(() => {
+    // Initialize state
+    initState(args, opts).then(() => {
+      // Run terraform command
+      runCommand(args, terraformArgs, opts).then(done, exitWithError);
+    }, exitWithError);
+  }).catch(() => exitWithError(
+    'Please install `terraform` before running `tf`'
+  ));
 }
 
 function initState(args, opts) {

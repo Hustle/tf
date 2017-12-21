@@ -21,6 +21,7 @@
   "homepage": "https://github.com/HustleInc/ops#readme",
   "dependencies": {
     "colors": "^1.1.2",
+    "command-exists": "^1.2.2",
     "commander": "^2.11.0"
   }
 }
