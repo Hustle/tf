@@ -111,9 +111,10 @@ A project may need to further differentiate by *group* when it is necessary to d
     │   │   ├── domain-event-sp.tfvars
     │   └── staging.tfvars
 
-Given this structure, the command to deploy the mongo state stream processor in the staging environment would look like:
+Given this structure, a command to apply infrastructure might be:
 
-    $ tf apply ecs-service staging -g mongo-state-sp
+    # apply ECS service infrastructure for the mongo state processor in staging
+    tf apply ecs-service staging -g mongo-state-sp
 
 ### `src`
 The source directory contains files that describe the state of the infrastructure for a given provider in the [tf file format](https://www.terraform.io/docs/configuration/syntax.html).
