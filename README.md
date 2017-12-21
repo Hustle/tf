@@ -21,8 +21,7 @@ working directory.
     Options:
 
       -V, --version            output the version number
-      -g, --group <group>      specify a group to allow multiple projects of the
-                               same type in the same environment
+      -g, --group <group>      specify group for multiple projects in the same <env>
       -f, --force              force destroy without prompt
       -p, --profile <profile>  AWS profile, default is infra
       -h, --help               output usage information
@@ -41,7 +40,7 @@ working directory.
       <project>
         A project name that maps to an infrastructure project directory
 
-        Example: kafka => ./kafka
+         Example: kafka => ./kafka
 
       <env>
          An environment name that maps to an infrastructure config file specific to
