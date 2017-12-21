@@ -2,14 +2,16 @@
 A tool built on top of `terraform` to help make infrastructure management a bit easier.
 
 ## Installation
-    $ npm install -g HustleInc/tf
+    # Install terraform on macOS
+    brew install terraform
 
-Add an environment variable so `tf` knows where to look for infrastructure projects:
+    # Install tf
+    npm install -g HustleInc/tf
 
+    # Add an environment variable so `tf` can find infrastructure projects
     export TF_INFRA_DIR=/path/to/infra/projects
 
-If the environment variable `TF_INFRA_DIR` is not set, `tf` will use the current
-working directory.
+If the environment variable `TF_INFRA_DIR` is not set, `tf` will use the current working directory.
 
 ## Usage
 
