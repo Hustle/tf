@@ -204,7 +204,7 @@ cli
   .version(pkg.version)
   .description(pkg.description)
   .arguments('<command> <project> <env> [terraformArgs...]')
-  .option('-g, --group <group>', `specify a group to allow multiple projects of the same type in the same environment`)
+  .option('-g, --group <group>', 'specify group for multiple projects in the same <env>')
   .option('-f, --force', 'force destroy without prompt')
   .option('-p, --profile <profile>', `AWS profile, default is ${'infra'.grey}`)
   .action((command, project, env, terraformArgs, opts) => {
