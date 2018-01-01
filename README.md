@@ -9,7 +9,7 @@ A tool built on top of `terraform` to help make infrastructure management a bit 
     npm install -g HustleInc/tf
 
     # Add an environment variable so `tf` can find infrastructure projects
-    export TF_INFRA_DIR=/path/to/infra/projects
+    export TF_INFRA_DIR=/path/to/ops/infrastructure/projects
 
 If the environment variable `TF_INFRA_DIR` is not set, `tf` will use the current working directory.
 
@@ -54,26 +54,26 @@ If the environment variable `TF_INFRA_DIR` is not set, `tf` will use the current
     Examples:
 
       Run a plan for Kafka infrastructure in the dev environment
-       $ ./tf plan kafka dev
+       $ tf plan kafka dev
 
       Apply infrastructure for networking in the staging environment
-       $ ./tf apply network staging
+       $ tf apply network staging
 
       Import an existing widget to the staging environment
-       $ ./tf import network staging aws_widgets.widget <widgetId>
+       $ tf import network staging aws_widgets.widget <widgetId>
 
       Run a plan for the default ECS cluster in the staging environment
-       $ ./tf plan ecs-cluster staging
+       $ tf plan ecs-cluster staging
 
-      Run a plan for a stateful streams ECS cluster in the staging environment
-       $ ./tf plan ecs-cluster staging -g stateful-streams
+      Apply infrastructure for ECS service domain-event-sp in the staging environment
+       $ tf apply ecs-service staging -g domain-event-sp
 
 ## Terraform
 
 "Terraform is a tool for building, changing, and versioning infrastructure safely and efficiently." --<cite><a href="https://www.terraform.io/intro/index.html" target="_blank">terraform.io</a></cite>
 
 ## Why Abstract Terraform?
-The short answer is managing remote Terraform state can be tedious and error prone, but necessary, especially when working with a team. Terraform has a ton of features that are not usually needed day-to-day. This tool abstracts the details of handling Terraform state and focuses on the most used features while also providing a simple framework for creating terraform projects. It ensures infrastructure state is maintained across machines and makes it easier and safer for engineers to collaborate. This abstraction should cover most needs for planning, applying and removing infrastructure. For everything else use `terraform`, but be aware of any operation modifying remote state.
+The short answer is managing remote Terraform state can be tedious and error prone, but necessary, especially when working with a team. Terraform has a ton of features that are not usually needed day-to-day. This tool abstracts the details of handling Terraform state and focuses on the most used features while also providing a simple framework for creating terraform projects. It ensures infrastructure state is maintained across machines and makes it easier and safer for engineers to collaborate. This abstraction should cover most needs for planning, applying and removing infrastructure. For everything else use `terraform`, but be aware of any operation that modifies remote state.
 
 ## Creating an Infrastructure Project
 
@@ -116,10 +116,14 @@ Given this structure, a command to apply infrastructure might be:
     # apply ECS service infrastructure for the mongo state processor in staging
     tf apply ecs-service staging -g mongo-state-sp
 
+Configuration variables precedence is in the order of least specific to most specific where the more specific configuration wins. For example, calling the command above would result in variables loading in this order:
+
+    defaults.tfvars < staging.tfvars < staging/mongo-state-sp.tfvars
+
 ### `src`
 The source directory contains files that describe the state of the infrastructure for a given provider in the [tf file format](https://www.terraform.io/docs/configuration/syntax.html).
 
-The **provider.tf** defines the provider, AWS in the example below, along with the required terraform version and backend definition for remote state storage. In most cases this file can be copied as is from an existing infrastructure project (with the appropriate bucket and profile settings, of course).
+The **provider.tf** defines the provider, AWS in the example below, along with the required terraform version and backend definition for remote state storage. In most cases this file can be copied as is from an existing infrastructure project.
 
     # Set cloud provider and region
     provider "aws" {
@@ -137,7 +141,7 @@ The **provider.tf** defines the provider, AWS in the example below, along with t
       }
     }
 
-The **data-sources.tf** defines any resources that need to be referenced but are built by other means, for example another infrastructure project or the AWS console. Data sources are only required when the resources are not defined in the current project and are needed to build new infrastructure. For example the AWS VPC resource is needed to create a new AWS security group resource, but likely defined in a **network** infrastructure project.
+The **data-sources.tf** defines any resources that need to be referenced but are built by other means, such as another infrastructure project or the AWS console. Data sources are only required when the resources are not defined in the current project and are needed to build new infrastructure. For example the AWS VPC resource is needed to create a new AWS security group resource, but likely defined in a **network** infrastructure project.
 
     data "aws_vpc" "main" {
       tags {
@@ -147,13 +151,13 @@ The **data-sources.tf** defines any resources that need to be referenced but are
 
     ...
 
-    resource "aws_security_group" "ecs_instance" {
-      name        = "ECS instance"
-      description = "ECS instance security group (${var.environment})"
-      vpc_id      = "${data.aws_vpc.main.id}"
+    resource "aws_security_group" "cluster" {
+      name        = "ECS cluster"
+      description = "ECS cluster security group (${var.environment})"
+      vpc_id      = "${data.aws_vpc.main.id}" # Using the data-source defined above
 
       tags {
-        Name        = "ecs-instance-sg"
+        Name        = "${var.environment}-cluster-sg"
         environment = "${var.environment}"
       }
     }
