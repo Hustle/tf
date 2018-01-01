@@ -116,11 +116,9 @@ function run(args, terraformArgs, opts) {
     // Initialize state
     initState(args, opts).then(() => {
       // Run terraform command
-      runCommand(args, terraformArgs, opts).then(done, exitWithError);
-    }, exitWithError);
-  }).catch(() => exitWithError(
-    'Please install `terraform` before running `tf`'
-  ));
+      runCommand(args, terraformArgs, opts).then(done).catch(exitWithError);
+    }).catch(exitWithError);
+  }).catch(() => exitWithError('Please install `terraform` before running `tf`'));
 }
 
 function initState(args, opts) {
