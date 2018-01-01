@@ -256,19 +256,19 @@ cli.on('--help', () => {
   Examples:
 
     Run a plan for Kafka infrastructure in the dev environment
-    ${' $ ./tf plan kafka dev '.bold}
+    ${' $ tf plan kafka dev '.bold}
 
     Apply infrastructure for networking in the staging environment
-    ${' $ ./tf apply network staging '.bold}
+    ${' $ tf apply network staging '.bold}
 
     Import an existing widget to the staging environment
-    ${' $ ./tf import network staging aws_widgets.widget <widgetId>'.bold}
+    ${' $ tf import network staging aws_widgets.widget <widgetId>'.bold}
 
     Run a plan for the default ECS cluster in the staging environment
-    ${' $ ./tf plan ecs-cluster staging'.bold}
+    ${' $ tf plan ecs-cluster staging'.bold}
 
-    Run a plan for a stateful streams ECS cluster in the staging environment
-    ${' $ ./tf plan ecs-cluster staging -g stateful-streams'.bold}
+    Apply infrastructure for ECS service domain-event-sp in the staging environment
+    ${' $ tf apply ecs-service staging -g domain-event-sp'.bold}
   `);
 });
 
