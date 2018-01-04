@@ -49,6 +49,10 @@ function getConfigFileName(args) {
   return null;
 }
 
+function parseExtraVars(vars) {
+  return vars.split(',').map((v) => `-var '${v.trim()}'`);
+}
+
 function processCommand(cmd) {
   if (!COMMANDS.includes(cmd)) {
     exitWithError(
@@ -161,6 +165,11 @@ function runCommand(args, terraformArgs, opts) {
     runArgs.push(`-var-file=../config/${args.env}/${opts.group}.tfvars`)
   }
 
+  // set extra vars
+  if (opts.extraVars && opts.extraVars.length) {
+    runArgs.push(...opts.extraVars);
+  }
+
   // skip prompts on force
   if (opts.force && ['destroy', 'apply'].includes(args.command)) {
     runArgs.push(args.command === 'apply' ? '-auto-approve' : '-force');
@@ -210,6 +219,7 @@ cli
   .option('-g, --group <group>', 'specify group for multiple projects in the same <env>')
   .option('-f, --force', 'force destroy without prompt')
   .option('-p, --profile <profile>', `AWS profile, default is ${'infra'.grey}`)
+  .option('-e, --extra-vars <vars>', `A comma separated list of var=value pairs to set or override terraform variables`, parseExtraVars)
   .action((command, project, env, terraformArgs, opts) => {
     // setup args
     const args = {
@@ -267,6 +277,10 @@ cli.on('--help', () => {
 
     Apply infrastructure for ECS service domain-event-sp in the staging environment
     ${' $ tf apply ecs-service staging -g domain-event-sp'.bold}
+
+    Apply infrastructure for ECS service domain-event-sp in the staging environment
+    with an extra variable to set ecs_image_tag
+    ${' $ tf apply ecs-service staging -g domain-event-sp -e ecs_image_tag=a1b2c3d'.bold}
   `);
 });
 
