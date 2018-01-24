@@ -192,9 +192,6 @@ function runCommand(args, terraformArgs, opts) {
         cwd: `${args.cwd}/${args.project}/src`,
         stdio: [process.stdin, 'pipe', 'pipe'],
         shell: true,
-        env: Object.assign({}, process.env, {
-          AWS_PROFILE: opts.profile || 'infra'
-        })
       });
       child.on('error', err => fail(`An error occurred running ${args.command}: ${err.message}`));
       child.stderr.on('data', d => console.error(d.toString()));
