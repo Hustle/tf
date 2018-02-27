@@ -94,23 +94,24 @@ First, let's look at the basic structure of a `tf` infrastructure project and th
 Describes the purpose and contents of the infrastructure project.
 
 ### `config`
-Contains configuration files in [tfvars format](https://www.terraform.io/intro/getting-started/variables.html#from-a-file) that define the infrastructure for the region and environment. A *defaults* or *common* tfvars file is required and should define reasonable defaults to be used across environments. You may also include a *secrets* tfvars file, which allows you to store secrets using a tool like [git-crypt](https://github.com/AGWA/git-crypt) while keeping the rest of your configuration in plain text, but this file is not required.
+Contains configuration files in [tfvars format](https://www.terraform.io/intro/getting-started/variables.html#from-a-file) that define the infrastructure for the region and environment. A *defaults* or *common* tfvars file is required and should define reasonable defaults to be used across environments.
 
-Environment specific variables must be defined in the appropriate environment tfvars file. The environment config file name maps to the &lt;env&gt; argument when `tf` is invoked.
+Environment specific variables must be defined in the appropriate environment tfvars file. The environment config file name maps to the &lt;env&gt; argument when `tf` is invoked. `tf` will also check for a file called `${env}-secrets.tfvars`, and load it if it exists. This allows you to store secrets using a tool like [git-crypt](https://github.com/AGWA/git-crypt) while keeping the rest of your configuration in plain text. The secrets file is not required.
 
 A project may need to further differentiate by *group* when it is necessary to deploy multiple groups of the same infrastructure in the same environment. For example, multiple ECS services exist in an ECS cluster and therefore groups are needed to define their unique configuration. Group variables must exist in a directory with the same name as the environment. For example, an ECS service config directory structure may look like:
 
     ├── config
     │   ├── defaults.tfvars
-    │   ├── secrets.tfvars
     │   ├── production
     │   │   ├── mongo-state-sp.tfvars
     │   │   └── domain-event-sp.tfvars
     │   ├── production.tfvars
+    │   ├── production-secrets.tfvars
     │   ├── staging
     │   │   ├── mongo-state-sp.tfvars
     │   │   ├── domain-event-sp.tfvars
     │   └── staging.tfvars
+    │   └── staging-secrets.tfvars
 
 Given this structure, a command to apply infrastructure might be:
 

@@ -166,8 +166,8 @@ function runCommand(args, terraformArgs, opts) {
   }
 
   // add secrets var file
-  if (fs.existsSync(`${args.cwd}/${args.project}/config/secrets.tfvars`)) {
-    runArgs.push(`-var-file=../config/secrets.tfvars`);
+  if (fs.existsSync(`${args.cwd}/${args.project}/config/${args.env}-secrets.tfvars`)) {
+    runArgs.push(`-var-file=../config/${args.env}-secrets.tfvars`);
   }
 
   // set extra vars
