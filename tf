@@ -285,6 +285,9 @@ cli.on('--help', () => {
     Apply infrastructure for ECS service domain-event-sp in the staging environment
     with an extra variable to set ecs_image_tag
     ${' $ tf apply ecs-service staging -g domain-event-sp -e ecs_image_tag=a1b2c3d'.bold}
+
+    Taint the staging backend api ECS service so that it gets recreated on next apply
+    ${' $ tf taint backend staging -- -module=api aws_ecs_service.internal_service'.bold}
   `);
 });
 
