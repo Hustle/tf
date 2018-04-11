@@ -16,6 +16,7 @@ const COMMANDS = [
   'destroy',
   'rename',
   'remove',
+  'taint',
 ];
 
 const COMMAND_MAP = {
@@ -250,6 +251,7 @@ cli.on('--help', () => {
       import  - Import an existing resource
       rename  - Rename an infrastructure resource
       remove  - Remove an infrastructure resource
+      taint   - Force resource reconstruction (destroy + recreate)
 
     <project>
       A project name that maps to an infrastructure project directory
