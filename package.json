@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HustleInc/tf.git"
+    "url": "git+https://github.com/Hustle/tf.git"
   },
   "author": "Hustle",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/HustleInc/tf/issues"
+    "url": "https://github.com/Hustle/tf/issues"
   },
-  "homepage": "https://github.com/HustleInc/tf#readme",
+  "homepage": "https://github.com/Hustle/tf#readme",
   "dependencies": {
     "colors": "^1.1.2",
     "command-exists": "^1.2.7",

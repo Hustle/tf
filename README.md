@@ -6,7 +6,7 @@ A tool built on top of `terraform` to help make infrastructure management a bit 
     brew install terraform
 
     # Install tf
-    npm install -g HustleInc/tf
+    npm install -g Hustle/tf
 
     # Add an environment variable so `tf` can find infrastructure projects
     export TF_INFRA_DIR=/path/to/ops/infrastructure/projects
@@ -167,6 +167,6 @@ The **data-sources.tf** defines any resources that need to be referenced but are
 Any files with the tf extension in the `src` directory will be included in the infrastructure. For most projects it is sufficient to have everything defined in a **main.tf**, however for larger projects it may make sense to organize similar resources into various files for readability.
 
 ## Development
-1. Fork the [HustleInc/tf](https://github.com/HustleInc/tf) repository
+1. Fork the [Hustle/tf](https://github.com/Hustle/tf) repository
 1. Fix some bugs or add some new features
 1. Submit a pull request 😎
