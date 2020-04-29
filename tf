@@ -137,7 +137,7 @@ function initState(args, opts) {
   return new Promise((success, fail) => {
     console.log(`Initializing state for ${args.project} ${args.env} ${opts.group ? opts.group + ' ' : ''}...`);
     exec(command, { cwd: `${args.cwd}/${args.project}/src` }, (err, stdout, stderr) => {
-      if (err || stderr) {
+      if (err) {
         const errMsg = err ? err.message : stderr;
         return fail(`An error occurred initializing state: ${errMsg}`);
       }
