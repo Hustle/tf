@@ -17,6 +17,7 @@ const COMMANDS = [
   'rename',
   'remove',
   'taint',
+  'output',
 ];
 
 const COMMAND_MAP = {
