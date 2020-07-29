@@ -17,6 +17,7 @@ const COMMANDS = [
   'rename',
   'remove',
   'taint',
+  'untaint',
   'output',
 ];
 
@@ -253,6 +254,7 @@ cli.on('--help', () => {
       rename  - Rename an infrastructure resource
       remove  - Remove an infrastructure resource
       taint   - Force resource reconstruction (destroy + recreate)
+      untaint - Unmarks resources as tainted
 
     <project>
       A project name that maps to an infrastructure project directory
