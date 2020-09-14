@@ -149,33 +149,47 @@ function initState(args, opts) {
   });
 }
 
-function runCommand(args, terraformArgs, opts) {
-  // Setup terraform command and options
-  const runArgs = [
-    ...args.command.split(' '),
-    '-input=false',
-    `-var 'environment=${args.env}'`
-  ];
+function buildEnvArgs(args, opts) {
+  const envArgs = [];
+
+  // add environment
+  envArgs.push(`-var 'environment=${args.env}'`)
 
   // add config var file
-  runArgs.push(`-var-file=../config/${getConfigFileName(args)}.tfvars`);
+  envArgs.push(`-var-file=../config/${getConfigFileName(args)}.tfvars`);
 
   // add env var file
-  runArgs.push(`-var-file=../config/${args.env}.tfvars`);
+  envArgs.push(`-var-file=../config/${args.env}.tfvars`);
 
   // add group var file
   if (opts.group) {
-    runArgs.push(`-var-file=../config/${args.env}/${opts.group}.tfvars`)
+    envArgs.push(`-var-file=../config/${args.env}/${opts.group}.tfvars`)
   }
 
   // add secrets var file
   if (fs.existsSync(`${args.cwd}/${args.project}/config/${args.env}-secrets.tfvars`)) {
-    runArgs.push(`-var-file=../config/${args.env}-secrets.tfvars`);
+    envArgs.push(`-var-file=../config/${args.env}-secrets.tfvars`);
   }
 
   // set extra vars
   if (opts.extraVars && opts.extraVars.length) {
-    runArgs.push(...opts.extraVars);
+    envArgs.push(...opts.extraVars);
+  }
+
+  return envArgs;
+}
+
+function runCommand(args, terraformArgs, opts) {
+  // Setup terraform command and options
+  const runArgs = [
+    ...args.command.split(' '),
+  ];
+  console.log(`tf subcommand is ${args.command}`);
+
+  if (['plan', 'apply', 'destroy'].includes(args.command)) {
+    console.log('pushin args');
+    runArgs.push('-input=false');
+    runArgs.push(...buildEnvArgs());
   }
 
   // skip prompts on force
