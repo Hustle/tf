@@ -13,6 +13,9 @@ const COMMANDS = [
   'plan',
   'apply',
   'import',
+  'list',
+  'move',
+  'show',
   'destroy',
   'rename',
   'remove',
@@ -22,8 +25,10 @@ const COMMANDS = [
 ];
 
 const COMMAND_MAP = {
-  rename: 'state mv',
   remove: 'state rm',
+  list: 'state list',
+  move: 'state mv',
+  show: 'state show',
 };
 
 /** Functions **/
@@ -184,12 +189,10 @@ function runCommand(args, terraformArgs, opts) {
   const runArgs = [
     ...args.command.split(' '),
   ];
-  console.log(`tf subcommand is ${args.command}`);
 
   if (['plan', 'apply', 'destroy'].includes(args.command)) {
-    console.log('pushin args');
     runArgs.push('-input=false');
-    runArgs.push(...buildEnvArgs());
+    runArgs.push(...buildEnvArgs(args, opts));
   }
 
   // skip prompts on force
