@@ -190,7 +190,7 @@ function runCommand(args, terraformArgs, opts) {
     ...args.command.split(' '),
   ];
 
-  if (['plan', 'apply', 'destroy'].includes(args.command)) {
+  if (['plan', 'apply', 'import', 'destroy'].includes(args.command)) {
     runArgs.push('-input=false');
     runArgs.push(...buildEnvArgs(args, opts));
   }
@@ -213,6 +213,7 @@ function runCommand(args, terraformArgs, opts) {
         console.log('Formatting complete.\n'.green);
       }
       console.log(`Running ${args.command} for ${args.project} ${args.env} ${opts.group ? opts.group + ' ' : ''}...`);
+      console.log(`terraform ${runArgs}`)
       const child = spawn(`terraform`, runArgs, {
         cwd: `${args.cwd}/${args.project}/src`,
         stdio: [process.stdin, 'pipe', 'pipe'],
