@@ -176,6 +176,11 @@ function buildEnvArgs(args, opts) {
     envArgs.push(`-var-file=../config/${args.env}-secrets.tfvars`);
   }
 
+  // add common secrets
+  if (fs.existsSync(`${args.cwd}/${args.project}/config/common-secrets.tfvars`)) {
+    envArgs.push(`-var-file=../config/common-secrets.tfvars`);
+  }
+
   // set extra vars
   if (opts.extraVars && opts.extraVars.length) {
     envArgs.push(...opts.extraVars);
