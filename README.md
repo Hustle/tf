@@ -13,7 +13,39 @@ A tool built on top of `terraform` to help make infrastructure management a bit 
 
 If the environment variable `TF_INFRA_DIR` is not set, `tf` will use the current working directory.
 
+We currently do not have a standardized provider configuration block used across all services. Because of this, you will need to switch between Terraform versions. `tfenv` is a package that allows us to manage multiple Terraform versions.
+
+    # Install tfenv on macOS
+    brew install tfenv
+
+Terraform version `1.0.1` and earlier do not have ARM binaries. Rosetta will be needed to run these versions.
+
+    # install Rosetta on macOS
+    softwareupdate --install-rosetta
+
+Create both the `default` and `infra` AWS profiles. Apply the same credentials to both.
+
+    # Configure default profile
+    aws configure
+
+    # Configure infra profile
+    aws configure --profile infra
+
 ## Usage
+Install Terraform version declared in `./src/provider.tf` within the folder of the AWS service you are managing.
+
+    # Install a specificied version of Terraform
+    tfenv install <version>
+
+    # Set default Terraform version
+    tfenv set <version>
+
+Terraform version `1.0.1` and earlier do not have ARM binaries. To install these versions use the following syntax.
+
+    #Install non ARM Terraform binary
+    TFENV_ARCH=amd64 tfenv install <version>
+
+`tf` expects your working directory to be `${PATH_TO_hello-world_REPO}/infra/terraform`. Runing from any other location will result in an error.
 
     Usage: tf [options] <command> <project> <env> [terraformArgs...]
 
