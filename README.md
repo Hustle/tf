@@ -2,14 +2,15 @@
 A tool built on top of `terraform` to help make infrastructure management a bit easier.
 
 ## Installation
-    # Install terraform on macOS
-    brew install terraform
+    # Install tfenv on macOS, then install the version of Terraform we are using in `hello-world`. e.g. `0.14.11` from (https://github.com/Hustle/hello-world/blob/master/infra/terraform/ecs-cluster/src/provider.tf#L8)
+    brew install tfenv
+    tfenv install 0.14.11
 
     # Install tf
     npm install -g Hustle/tf
 
     # Add an environment variable so `tf` can find infrastructure projects
-    export TF_INFRA_DIR=/path/to/ops/infrastructure/projects
+    export TF_INFRA_DIR=/path/to/hello-world/infra/terraform/
 
 If the environment variable `TF_INFRA_DIR` is not set, `tf` will use the current working directory.
 
